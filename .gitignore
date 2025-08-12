@@ -74,3 +74,5 @@ certs/
 
 # Testing artifacts
 .testcache/
+.claude
+CLAUDE.md
