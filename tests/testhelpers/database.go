@@ -5,6 +5,9 @@ import (
 	"testing"
 	"time"
 
+	"github.com/golang-migrate/migrate/v4"
+	_ "github.com/golang-migrate/migrate/v4/database/postgres"
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/require"
 	"github.com/testcontainers/testcontainers-go"
@@ -40,6 +43,9 @@ func SetupTestDB(t *testing.T) *pgxpool.Pool {
 	err = pool.Ping(ctx)
 	require.NoError(t, err)
 
+	// Run database migrations
+	runMigrations(t, connStr)
+
 	// Cleanup function
 	t.Cleanup(func() {
 		pool.Close()
@@ -47,6 +53,23 @@ func SetupTestDB(t *testing.T) *pgxpool.Pool {
 	})
 
 	return pool
+}
+
+// runMigrations runs database migrations for tests
+func runMigrations(t *testing.T, connStr string) {
+	m, err := migrate.New(
+		"file://../../db/migrations",
+		connStr,
+	)
+	require.NoError(t, err)
+
+	err = m.Up()
+	require.NoError(t, err)
+
+	// Close migrate instance
+	sourceErr, dbErr := m.Close()
+	require.NoError(t, sourceErr)
+	require.NoError(t, dbErr)
 }
 
 // CleanupTestDB performs cleanup operations on test database

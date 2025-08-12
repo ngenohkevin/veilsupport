@@ -8,21 +8,31 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 	"github.com/stretchr/testify/require"
 )
 
-// SetupTestServer creates a test HTTP server for integration tests
+// SetupTestServer creates a test HTTP server for integration tests using the actual Gin router
 func SetupTestServer(t *testing.T, pool *pgxpool.Pool) *httptest.Server {
-	// This will be implemented when we create the main server in later phases
-	// For now, return a basic server
-	mux := http.NewServeMux()
-	mux.HandleFunc("/health", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-		w.Write([]byte("OK"))
+	// Set Gin to test mode
+	gin.SetMode(gin.TestMode)
+	
+	// Create Gin router with same setup as main.go
+	router := gin.Default()
+	
+	// Add the health endpoint exactly as in main.go
+	router.GET("/health", func(c *gin.Context) {
+		c.JSON(http.StatusOK, gin.H{
+			"status":  "ok",
+			"service": "veilsupport",
+			"version": "0.1.0",
+		})
 	})
 
-	server := httptest.NewServer(mux)
+	// TODO: Add other routes when implemented in later phases
+
+	server := httptest.NewServer(router)
 	
 	t.Cleanup(func() {
 		server.Close()
