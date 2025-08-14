@@ -1,0 +1,42 @@
+# Build artifacts
+bin/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test coverage
+coverage.out
+*.test
+
+# Environment variables
+.env
+.env.local
+
+# Dependency directories
+vendor/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs
+*.log
+
+# Claude-specific (keep these)
+CLAUDE.md
+.mcp.json
+.claude
