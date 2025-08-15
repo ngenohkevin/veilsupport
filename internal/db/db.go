@@ -45,7 +45,29 @@ func (d *DB) GetConn() *pgx.Conn {
 }
 
 func generateJID(email string) string {
-	return fmt.Sprintf("user_%d@domain.com", time.Now().Unix())
+	// Extract username from email or create a clean username
+	username := email
+	if atIndex := fmt.Sprintf("%s", email); len(atIndex) > 0 {
+		if idx := len(email); idx > 0 {
+			// Use the part before @ as username, clean it up
+			parts := []rune{}
+			for _, r := range email {
+				if r == '@' {
+					break
+				}
+				if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') || (r >= '0' && r <= '9') {
+					parts = append(parts, r)
+				}
+			}
+			if len(parts) > 0 {
+				username = string(parts)
+			}
+		}
+	}
+	
+	// Ensure username is valid and add timestamp for uniqueness
+	timestamp := time.Now().Unix()
+	return fmt.Sprintf("user_%s_%d@xmpp.jp", username, timestamp)
 }
 
 func (d *DB) CreateUser(email, passwordHash string) (*User, error) {

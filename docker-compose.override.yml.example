@@ -1,0 +1,33 @@
+# docker-compose.override.yml.example
+# Copy this file to docker-compose.override.yml for local development
+# This file provides local development overrides
+
+services:
+  app:
+    # Enable hot reloading for development (requires air or similar)
+    # volumes:
+    #   - .:/app
+    #   - /app/tmp
+    # command: air -c .air.toml
+    
+    # Override environment variables for local development
+    environment:
+      # Use these values or copy from .env file
+      JWT_SECRET: "local-development-secret-key"
+      XMPP_SERVER: "localhost"
+      XMPP_ADMIN_JID: "admin@localhost"
+      XMPP_ADMIN_PASSWORD: "dev-password"
+      
+  # Optional: Add local XMPP server for testing
+  # ejabberd:
+  #   image: ejabberd/ecs
+  #   ports:
+  #     - "5222:5222"
+  #     - "5280:5280"
+  #   environment:
+  #     - EJABBERD_ADMINS=admin@localhost
+  #   volumes:
+  #     - ejabberd_data:/home/ejabberd/database
+
+# volumes:
+#   ejabberd_data:
